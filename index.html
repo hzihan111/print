@@ -3,6 +3,7 @@
 <html lang="zh-Hant">
 
 <head>
+  <link id="favicon" rel="icon" href="" />
 
   <meta charset="UTF-8">
 
@@ -112,6 +113,14 @@
 
   </script>
 
+
+  <script>
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = 64;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, 64, 64); // 全透明
+    document.getElementById('favicon').href = canvas.toDataURL();
+  </script>
 </body>
 
 </html>
