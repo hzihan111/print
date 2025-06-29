@@ -1,118 +1,48 @@
 <!DOCTYPE html>
-
 <html lang="zh-Hant">
-
 <head>
   <link id="favicon" rel="icon" href="" />
-
   <meta charset="UTF-8">
-
-  <title>上傳並全螢幕執行 HTML</title>
-
+  <title>點擊選擇並開啟 HTML 檔</title>
   <style>
-
     body {
-
-      margin: 0;
-
-      height: 100vh;
-
       display: flex;
-
-      flex-direction: column;
-
-      align-items: center;
-
       justify-content: center;
-
-      background: #f0f0f0;
-
-    }
-
-    #htmlFile {
-
-      margin: 20px;
-
-    }
-
-    iframe {
-
-      width: 100vw;
-
+      align-items: center;
       height: 100vh;
-
-      border: none;
-
-      display: none;
-
+      margin: 0;
+      background-color: #222;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
     }
-
   </style>
-
 </head>
-
 <body>
+  點擊畫面選擇 HTML 檔案執行
 
-  <input type="file" id="htmlFile" accept=".html">
-
-  <iframe id="preview" allowfullscreen></iframe>
+  <input type="file" id="fileInput" accept=".html" style="display: none;" />
 
   <script>
-
-    const input = document.getElementById("htmlFile");
-
-    const iframe = document.getElementById("preview");
-
-    input.addEventListener("change", async function () {
-
-      const file = input.files[0];
-
-      if (!file) return;
-
-      const reader = new FileReader();
-
-      reader.onload = async function (e) {
-
-        const htmlContent = e.target.result;
-
-        // 載入 HTML 到 iframe
-
-        iframe.srcdoc = htmlContent;
-
-        iframe.style.display = "block";
-
-        // 嘗試請求全螢幕
-
-        await requestFullScreen(iframe);
-
-      };
-
-      reader.readAsText(file);
-
+    document.body.addEventListener('click', () => {
+      document.getElementById('fileInput').click();
     });
 
-    function requestFullScreen(element) {
-
-      return new Promise((resolve, reject) => {
-
-        const request = element.requestFullscreen || element.webkitRequestFullscreen || element.mozRequestFullScreen || element.msRequestFullscreen;
-
-        if (request) {
-
-          request.call(element).then(resolve).catch(reject);
-
-        } else {
-
-          reject("FullScreen API not supported");
-
-        }
-
-      });
-
-    }
-
+    document.getElementById('fileInput').addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (file && file.type === 'text/html') {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const blob = new Blob([e.target.result], { type: 'text/html' });
+          const url = URL.createObjectURL(blob);
+          window.open(url, '_blank');
+        };
+        reader.readAsText(file);
+      } else {
+        alert("請選擇 .html 檔案");
+      }
+    });
   </script>
-
 
   <script>
     const canvas = document.createElement('canvas');
@@ -122,5 +52,4 @@
     document.getElementById('favicon').href = canvas.toDataURL();
   </script>
 </body>
-
 </html>
