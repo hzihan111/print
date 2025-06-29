@@ -1,55 +1,55 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <link id="favicon" rel="icon" href="" />
   <meta charset="UTF-8">
-  <title>點擊選擇並開啟 HTML 檔</title>
+  <title>點擊選取並執行 HTML 檔案</title>
   <style>
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+    body, html {
       margin: 0;
-      background-color: #222;
-      color: white;
-      font-size: 24px;
+      height: 100%;
+      background: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: sans-serif;
       cursor: pointer;
+      text-align: center;
+    }
+    iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      border: none;
     }
   </style>
 </head>
 <body>
-  點擊畫面選擇 HTML 檔案執行
-
-  <input type="file" id="fileInput" accept=".html" style="display: none;" />
+  <div id="prompt">📄 點擊畫面以選擇 HTML 檔案</div>
+  <input type="file" id="fileInput" accept=".html,.htm,text/html" style="display:none">
 
   <script>
+    const fileInput = document.getElementById('fileInput');
+    const prompt = document.getElementById('prompt');
+
     document.body.addEventListener('click', () => {
-      document.getElementById('fileInput').click();
+      fileInput.click();
     });
 
-    document.getElementById('fileInput').addEventListener('change', (event) => {
-      const file = event.target.files[0];
-      if (file && file.type === 'text/html') {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const blob = new Blob([e.target.result], { type: 'text/html' });
-          const url = URL.createObjectURL(blob);
-          window.open(url, '_blank');
-        };
-        reader.readAsText(file);
-      } else {
-        alert("請選擇 .html 檔案");
+    fileInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const text = await file.text();
+
+        const blob = new Blob([text], { type: "text/html" });
+        const url = URL.createObjectURL(blob);
+
+        const iframe = document.createElement('iframe');
+        iframe.src = url;
+
+        document.body.innerHTML = ''; // 清空畫面
+        document.body.appendChild(iframe);
       }
     });
-  </script>
-
-  <script>
-    const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = 64;
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, 64, 64); // 全透明
-    document.getElementById('favicon').href = canvas.toDataURL();
   </script>
 </body>
 </html>
